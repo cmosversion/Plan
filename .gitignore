@@ -63,3 +63,4 @@ errors/*
 errors/*.*
 sessions
 cache/*
+*.table
