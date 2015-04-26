@@ -1,0 +1,82 @@
+{{extend 'plan/layout.html'}}
+{{block body}}
+    {{def process_default_item(item, icon_controls=None, parent_class=None):}}
+
+        {{root_item = item.get('item')}}
+        {{item_items = (item.get('items'))}}
+
+        {{filtered_items = item.copy()}}
+
+        {{if item_items is not None:}}
+            {{del filtered_items['items']}}
+        {{pass}}
+
+
+        {{item_parent_class = parent_class}}
+        {{if parent_class is None:}}
+            {{item_parent_class = ''}}
+        {{pass}}
+
+        {{if root_item is not None:}}
+            {{if item_items is not None:}}
+                <ul  class="{{=item_parent_class}} collapse in">
+                    <li class="{{=item_parent_class}} collapse in">
+                        <a data-toggle="collapse" data-target=".{{=root_item.get('item_id', '')}}">
+                            <div class='head-control control-group'>
+                                <input id="{{=root_item.get('item_id', '')}}"  value="{{=root_item.get('value', '')}}" />
+                                {{if icon_controls is not None:}}
+                                    <span class="icon-controls pull-right">
+                                        {{for icon in icon_controls:}}
+                                             <i class="{{=icon}}"></i>
+                                        {{pass}}
+                                    </span>
+                                {{pass}}
+                            </div>
+                        </a>
+                    </li>
+                    {{parent_class=root_item.get('item_id', '')}}
+            {{else:}}
+                {{if root_item.get('item_id') is not None:}}
+                    <li class="{{=item_parent_class}} collapse in">
+                        <input id="{{=root_item.get('item_id', '')}}" value="{{=root_item.get('value', '')}}" />
+                    </li>
+                {{pass}}
+            {{pass}}
+            {{del filtered_items['item']}}
+        {{pass}}
+
+        {{for filtered_item_key, filtered_item in sorted(filtered_items.iteritems()):}}
+            {{if filtered_item.get('item_id') is not None:}}
+                <li class="{{=item_parent_class}} collapse in">
+                    <input id="{{=filtered_item.get('item_id', '')}}" value="{{=filtered_item.get('value', '')}}" />
+                </li>
+            {{pass}}
+        {{pass}}
+
+        {{if item_items is not None:}}
+            <li class="{{=parent_class}} collapse in">
+                {{for item_items_key, item_items_item in sorted(item_items.iteritems()):}}
+                    {{process_default_item(item_items_item, icon_controls, parent_class)}}
+                {{pass}}
+            </li>
+        {{pass}}
+
+        {{if root_item is not None and item_items is not None:}}
+            </ul>
+        {{pass}}
+    {{pass}}
+
+    {{if data is not None:}}
+        {{if data.get('form') is not None:}}
+            {{form = data.get('form')}}
+            {{form.custom.begin}}
+                {{if data.get('item') is not None:}}
+                    <div class="container">
+                        {{process_default_item(data.get('item'), data.get('item_icons'))}}
+                    </div>
+                {{pass}}
+            {{form.custom.end}}
+        {{pass}}
+    {{pass}}
+
+{{end}}
